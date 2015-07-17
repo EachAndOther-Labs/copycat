@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brush sizes -->
+    <dimen name="brush">10dp</dimen>
+    <integer name="size">10</integer>
+</resources>
