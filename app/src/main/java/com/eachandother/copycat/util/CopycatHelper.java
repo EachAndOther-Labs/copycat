@@ -26,7 +26,6 @@ public class CopycatHelper {
     }
 
     public void penUp() {
-        Log.d(TAG, "Pen up");
         this.mirobot.penUp();
     }
 
