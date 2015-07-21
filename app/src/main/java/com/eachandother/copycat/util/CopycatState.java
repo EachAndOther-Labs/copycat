@@ -7,35 +7,56 @@ import android.graphics.Point;
  */
 public class CopycatState {
 
-    private Point previousPosition;
-    private Point currentPosition;
+    private int previousX;
+    private int currentX;
+    private int previousY;
+    private int currentY;
     private float previousAngle;
     private float angle;
-    public final static Point STARTING_POINT = new Point(-15,-15);
+    public final static int STARTING_POINT_X = -15, STARTING_POINT_Y = -15;
     boolean penDown = false;
 
     public CopycatState(){
-        currentPosition = STARTING_POINT;
-        previousPosition = STARTING_POINT;
+        currentX = STARTING_POINT_X;
+        currentY = STARTING_POINT_Y;
+        previousX = STARTING_POINT_X;
+        previousY = STARTING_POINT_Y;
         previousAngle = 0;
         angle = 0;
     }
 
-    public Point getPreviousPosition() {
-        return previousPosition;
+    public int getPreviousX() {
+        return previousX;
     }
 
-    public void setPreviousPosition(Point previousPosition) {
-        this.previousPosition = previousPosition;
+    public void setPreviousX(int previousX) {
+        this.previousX = previousX;
     }
 
-    public Point getCurrentPosition() {
-        return currentPosition;
+    public int getCurrentX() {
+        return currentX;
     }
 
-    public void setCurrentPosition(Point currentPosition) {
-        previousPosition = this.currentPosition;
-        this.currentPosition = currentPosition;
+    public void setCurrentX(int currentX) {
+        this.previousX = currentX;
+        this.currentX = currentX;
+    }
+
+    public int getPreviousY() {
+        return previousY;
+    }
+
+    public void setPreviousY(int previousY) {
+        this.previousY = previousY;
+    }
+
+    public int getCurrentY() {
+        return currentY;
+    }
+
+    public void setCurrentY(int currentY){
+        this.previousY = this.currentY;
+        this.currentY = currentY;
     }
 
     public float getPreviousAngle() {
@@ -56,7 +77,8 @@ public class CopycatState {
     }
 
     public void resetState(){
-        currentPosition = STARTING_POINT;
+        currentX = STARTING_POINT_X;
+        currentY = STARTING_POINT_Y;
         previousAngle = 0;
         angle = 0;
     }

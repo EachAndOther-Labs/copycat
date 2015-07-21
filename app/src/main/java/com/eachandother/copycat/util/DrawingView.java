@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.os.Debug;
+import android.os.Trace;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,13 +18,16 @@ public class DrawingView extends View {
     private Path path;
     private Paint paint;
     private float lastX, lastY;
-    private final RectF dirtyRect = new RectF();
+    private final RectF dirtyRect;
     private static final float STROKE_WIDTH = 15f, HALF_STROKE_WIDTH = STROKE_WIDTH / 2;
     private final String TAG = this.getClass().getName();
-    private CopycatHelper copycat = new CopycatHelper();
+    private CopycatHelper copycat;
 
     public DrawingView(Context c, AttributeSet attrs) {
         super(c, attrs);
+
+        copycat = new CopycatHelper();
+        dirtyRect = new RectF();
 
         // we set a new Path
         path = new Path();
@@ -51,8 +56,7 @@ public class DrawingView extends View {
 
     // when ACTION_DOWN start touch according to the lastX,lastY values
     private void startTouch(float x, float y) {
-        Point pt = new Point((int)x,(int)y);
-        copycat.penDown(pt);
+        copycat.penDown(x, y);
         path.moveTo(x, y);
         this.lastX = x;
         this.lastY = y;
@@ -62,7 +66,6 @@ public class DrawingView extends View {
     private void moveTouch(float x, float y, MotionEvent e) {
         // Start tracking the dirty region.
         resetDirtyRect(x, y);
-
         // When the hardware tracks events faster than
         // they can be delivered to the app, the
         // event will contain a history of those skipped points.
@@ -73,11 +76,9 @@ public class DrawingView extends View {
             expandDirtyRect(historicalX, historicalY);
             path.lineTo(historicalX, historicalY);
         }
-
         // After replaying history, connect the line to the touch point.
         path.lineTo(x, y);
-        //Log.d(TAG, p.lastX + ", " + p.lastY);
-        //copycat.drawPoint(p);
+        copycat.drawPoint(x,y);
     }
 
     public void clearCanvas() {
@@ -96,13 +97,13 @@ public class DrawingView extends View {
         float x = event.getX();
         float y = event.getY();
 
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
             startTouch(x, y);
         }
-        if(event.getAction() == MotionEvent.ACTION_MOVE){
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
             moveTouch(x, y, event);
         }
-        if(event.getAction() == MotionEvent.ACTION_UP){
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             moveTouch(x, y, event);
             upTouch();
         }
