@@ -14,43 +14,45 @@ public class CopycatHelper {
     private MirobotWrapper mirobot;
     private CopycatState state;
     private Dimension viewSize;
-    private Dimension A4Size = new Dimension(297, 210);
+    private Dimension A4Size;
+    private PixelConverter converter;
 
     public CopycatHelper() {
         mirobot = new MirobotWrapper(MIROBOT_URL);
         state = new CopycatState();
+        A4Size = new Dimension(297,210);
     }
 
-    public void drawPoint(Point pt) {
-        orientCopycat(pt);
+    public void drawPoint(float x, float y) {
+        orientCopycat(x,y);
     }
 
     public void penUp() {
-        Log.d(TAG, "Pen up");
         this.mirobot.penUp();
     }
 
-    public void penDown(Point pt) {
-        orientCopycat(pt);
+    public void penDown(float x, float y) {
+        orientCopycat(x, y);
         this.mirobot.penDown();
     }
 
     public void setViewDimensions(int w, int h){
         viewSize = new Dimension(w, h);
+        converter = new PixelConverter(viewSize, A4Size);
         Log.d(TAG, "View size is: " + viewSize.getWidth() + " " + viewSize.getHeight());
     }
 
-    private void orientCopycat(Point pt){
-        float deltaX = calculateDelta(pt.x, state.getCurrentPosition().x);
-        float deltaY = calculateDelta(pt.y, state.getCurrentPosition().y);
+    private void orientCopycat(float x, float y){
+        float deltaX = calculateDelta(x, state.getCurrentX());
+        float deltaY = calculateDelta(y, state.getCurrentY());
         rotate(deltaX, deltaY);
         move(deltaX, deltaY);
     }
 
     private void move(float deltaX, float deltaY) {
         float distance = calculateDistance(deltaX, deltaY);
-        Point pt = new Point(state.getCurrentPosition().x + (int)deltaX, state.getCurrentPosition().y + (int)deltaY);
-        state.setCurrentPosition(pt);
+        state.setCurrentX(state.getPreviousX() + (int)deltaX);
+        state.setCurrentY(state.getPreviousY() + (int)deltaY);
         this.mirobot.move(MirobotWrapper.MIROBOT_DIRECTION.forward, (int)distance);
     }
 
@@ -89,8 +91,7 @@ public class CopycatHelper {
     }
 
     private float calculateDistance(float deltaX, float deltaY) {
-        PixelConverter converter = new PixelConverter(deltaX, deltaY, viewSize, A4Size);
-        double distance = Math.sqrt(Math.pow((double)converter.getMMXValue(), 2) + Math.pow((double)converter.getMMYValue(), 2));
+        double distance = Math.sqrt(Math.pow((double)converter.getMMXValue(deltaX), 2) + Math.pow((double)converter.getMMYValue(deltaY), 2));
         return (float) distance;
     }
 }
