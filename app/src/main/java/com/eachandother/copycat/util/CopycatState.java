@@ -1,7 +1,5 @@
 package com.eachandother.copycat.util;
 
-import android.graphics.Point;
-
 /**
  * Created by richeyryan on 16/07/2015.
  */

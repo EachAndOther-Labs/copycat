@@ -1,7 +1,9 @@
 package com.eachandother.copycat.mirobot;
 
 import android.util.Log;
-import org.apache.commons.lang3.RandomStringUtils;
+import android.util.Size;
+
+import com.eachandother.copycat.util.RandomString;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,17 +12,18 @@ import org.json.JSONObject;
  */
 public final class MirobotJSONHelper {
     private static final String TAG = "MirobotJSONHelper";
+    private static RandomString generator = new RandomString(10);
 
     public static String generateId() {
-        return RandomStringUtils.randomAlphanumeric(10);
+        return generator.nextString();
     }
 
     public static String moveJSON(String direction, int distance, String id) {
         JSONObject json = new JSONObject();
         try {
-            json.put("cmd", direction);
-            json.put("arg", distance);
             json.put("id", id);
+            json.put("arg", Integer.toString(distance));
+            json.put("cmd", direction);
         } catch (JSONException e) {
             Log.d(TAG, e.getMessage());
         }
@@ -31,7 +34,7 @@ public final class MirobotJSONHelper {
         JSONObject json = new JSONObject();
         try {
             json.put("cmd", direction);
-            json.put("arg", angle);
+            json.put("arg", Integer.toString(angle));
             json.put("id", id);
         } catch (JSONException e) {
             Log.d(TAG, e.getMessage());
@@ -90,6 +93,18 @@ public final class MirobotJSONHelper {
             json.put("cmd", "version");
             json.put("id", id);
         } catch (JSONException e) {
+            Log.d(TAG, e.getMessage());
+        }
+        return json.toString();
+    }
+
+    public static String stopJSON(String id){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("cmd", "stop");
+            json.put("id", id);
+        }
+        catch (JSONException e){
             Log.d(TAG, e.getMessage());
         }
         return json.toString();

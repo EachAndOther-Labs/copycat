@@ -8,11 +8,15 @@ import android.util.Log;
 public class PixelConverter {
     private Dimension view;
     private Dimension paper;
+    private float percentage;
     private final String TAG = this.getClass().getName();
 
     public PixelConverter(Dimension view, Dimension paper){
         this.view = view;
         this.paper = paper;
+        float widthPercent = paper.getWidth() / view.getWidth();
+        float heightPercent = paper.getHeight() / view.getHeight();
+        percentage = widthPercent + heightPercent / 2;
     }
 
     public Dimension getView() {
@@ -31,13 +35,7 @@ public class PixelConverter {
         this.paper = paper;
     }
 
-    public float getMMXValue(float x){
-        float xPercentage = x / this.view.getWidth();
-        return this.paper.getWidth() * xPercentage;
-    }
-
-    public float getMMYValue(float y){
-        float yPercentage = y / this.view.getHeight();
-        return this.paper.getHeight() * yPercentage;
+    public int convertPxToMm(double px){
+        return (int)Math.round(px * percentage);
     }
 }
